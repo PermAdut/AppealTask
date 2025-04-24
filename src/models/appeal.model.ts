@@ -8,6 +8,7 @@ export enum AppealStatus{
 }
 
 export interface IAppeal {
+    _id: string;
     theme: string;
     text: string;
     date: Date;

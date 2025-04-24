@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { AppealRequestDto } from "../dto/appealRequest.dto";
-import { Appeal, AppealStatus } from "../models/appeal.model";
+import { Appeal, AppealStatus, IAppeal } from "../models/appeal.model";
 import { AppealCreateResponseDto } from "../dto/appealResponse.dto";
 export class AppealRepository{
     private mongoDbClient = mongoose.connection;
@@ -14,10 +14,40 @@ export class AppealRepository{
                 date:new Date(),
             });
             await appeal.save();
-            const appealDto = new AppealCreateResponseDto(appeal);
+            const appealDto = new AppealCreateResponseDto({
+                _id:appeal._id.toString(),
+                theme:appeal.theme,
+                text:appeal.text,
+                appealStatus:appeal.appealStatus,
+                date:appeal.date,
+            });
             return appealDto;
-        }catch(error){
-            throw new Error('Failed to create appeal');
+        }catch(error:any){
+            throw new Error(error.message);
+        }
+    }
+
+    async takeAppeal(appealId:string):Promise<AppealCreateResponseDto>{
+        try{
+            const appeal = await Appeal.findById(appealId);
+            if(!appeal){
+                throw new Error('Appeal not found');
+            }
+            if(appeal.appealStatus !== AppealStatus.NEW){
+                throw new Error('Appeal is not new');
+            }
+            appeal.appealStatus = AppealStatus.IN_PROGRESS;
+            await appeal.save();    
+            const appealDto = new AppealCreateResponseDto({
+                _id:appeal._id.toString(),
+                theme:appeal.theme,
+                text:appeal.text,
+                appealStatus:appeal.appealStatus,
+                date:appeal.date,
+            });
+            return appealDto;
+        } catch(error: any){
+            throw new Error(error.message);
         }
     }
 }

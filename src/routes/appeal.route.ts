@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { createAppeal } from "../controllers/appeal.controller";
+import { createAppeal, takeAppeal } from "../controllers/appeal.controller";
+import { parseReqBody } from "../middleware/parseReqBody";
 
 const router = Router();
 
-router.post('/', createAppeal);
-
+router.post('/', parseReqBody, createAppeal);
+router.patch('/take/:appealId', takeAppeal);
 export default router;

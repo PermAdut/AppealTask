@@ -9,7 +9,22 @@ export async function createAppeal(req: Request, res: Response, next: NextFuncti
     try {
         const appeal = await appealRepository.createAppeal(req.body as AppealRequestDto);
         res.status(201).json(appeal);
-    } catch (error) {
+    } catch (error:any) {
         next(error);
+    }
+}
+
+export async function takeAppeal(req: Request, res: Response, next: NextFunction){
+    try{
+        const appeal = await appealRepository.takeAppeal(req.params.appealId);
+        res.status(200).json(appeal);
+    } catch (error:any) {
+        if(error.message === 'Appeal not found'){
+            res.status(404).json({message:error.message});
+        }else if(error.message === 'Appeal is not new'){
+            res.status(400).json({message:error.message});
+        }else{
+            next(error);
+        }
     }
 }
