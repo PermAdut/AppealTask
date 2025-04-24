@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import { AppealRequestDto } from '../dto/appealRequest.dto';
 import { Appeal, AppealStatus, IAppeal } from '../models/appeal.model';
 import { AppealCreateResponseDto } from '../dto/appealResponse.dto';
+
 export class AppealRepository {
-  private mongoDbClient = mongoose.connection;
 
   async createAppeal(body: AppealRequestDto): Promise<AppealCreateResponseDto> {
     try {
@@ -101,18 +101,15 @@ export class AppealRepository {
 
   async findAllByDate(dates: string[]): Promise<AppealCreateResponseDto[]> {
     try {
-      const appeals = await Promise.all(
-        dates.map(async (el) => {
-          const appeal = await Appeal.find({
-            date: {
-              $gte: `${el}T00:00:00.000+00:00`,
-              $lte: `${el}T23:59:59.999+00:00`,
-            },
-          });
-          return appeal;
-        }),
-      );
-      return appeals.flat().map(
+      const startDate:string = `${dates[0]}T00:00:00.000+00:00`;
+      const endDate:string = `${dates[1]}T23:59:59.999+00:00`;
+      const appeals = await Appeal.find({
+        date: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      });
+      return appeals.map(
         (appeal) =>
           new AppealCreateResponseDto({
             _id: appeal._id.toString(),

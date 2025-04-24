@@ -2,14 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 
 export function parseQuery(req: Request, res: Response, next: NextFunction) {
   try {
-    let dates: string[];
-    if (Array.isArray(req.query.date)) {
-      dates = req.query.date as string[];
-    } else {
-      dates = [req.query.date as string];
-    }
-    if (!dates || dates.length === 0) {
-      throw new Error('Date is required');
+    const dates = req.query.date as string[];
+    if (!dates || dates.length !== 2) {
+      throw new Error('You must provide two dates');
     }
     dates.forEach((el) => {
       const regex = /^\d{4}-\d{2}-\d{2}$/;
@@ -23,7 +18,7 @@ export function parseQuery(req: Request, res: Response, next: NextFunction) {
     });
     next();
   } catch (error: any) {
-    if (error.message === 'Date is required') {
+    if (error.message === 'You must provide two dates') {
       res.status(400).json({ message: error.message });
     } else if (error.message === 'Invalid date format, use YYYY-MM-DD') {
       res.status(400).json({ message: error.message });
