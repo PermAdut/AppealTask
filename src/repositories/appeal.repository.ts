@@ -74,4 +74,23 @@ export class AppealRepository{
             throw new Error(error.message);
         }
     }
+
+    async cancelAllAppealsInProgress():Promise<AppealCreateResponseDto[]>{
+        try{
+            const appeals = await Appeal.find({appealStatus:AppealStatus.IN_PROGRESS});
+            for(const appeal of appeals){
+                appeal.appealStatus = AppealStatus.CANCELLED;
+                await appeal.save();
+            }
+            return appeals.map(appeal => new AppealCreateResponseDto({
+                _id:appeal._id.toString(),
+                theme:appeal.theme,
+                text:appeal.text,
+                appealStatus:appeal.appealStatus,
+                date:appeal.date,
+            }));
+        } catch(error:any){
+            throw new Error(error.message);
+        }
+    }
 }

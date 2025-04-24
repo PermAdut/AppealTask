@@ -43,3 +43,12 @@ export async function cancelAppeal(req: Request, res: Response, next: NextFuncti
         }
     }
 }
+
+export async function cancelAllAppealsInProgress(req: Request, res: Response, next: NextFunction){
+    try{
+        const appeals = await appealRepository.cancelAllAppealsInProgress();
+        res.status(200).json(appeals);
+    } catch (error:any) {
+        next(error);
+    }
+}
