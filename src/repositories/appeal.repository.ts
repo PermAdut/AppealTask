@@ -50,4 +50,28 @@ export class AppealRepository{
             throw new Error(error.message);
         }
     }
+
+    async cancelAppeal(appealId:string):Promise<AppealCreateResponseDto>{
+        try{
+            const appeal = await Appeal.findById(appealId);
+            if(!appeal){
+                throw new Error('Appeal not found');
+            }
+            if(appeal.appealStatus !== AppealStatus.IN_PROGRESS){
+                throw new Error('Appeal is not in progress');
+            }
+            appeal.appealStatus = AppealStatus.CANCELLED;
+            await appeal.save();
+            const appealDto = new AppealCreateResponseDto({
+                _id:appeal._id.toString(),
+                theme:appeal.theme,
+                text:appeal.text,
+                appealStatus:appeal.appealStatus,
+                date:appeal.date,
+            });
+            return appealDto;
+        } catch(error:any){
+            throw new Error(error.message);
+        }
+    }
 }

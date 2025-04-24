@@ -28,3 +28,18 @@ export async function takeAppeal(req: Request, res: Response, next: NextFunction
         }
     }
 }
+
+export async function cancelAppeal(req: Request, res: Response, next: NextFunction){
+    try{
+        const appeal = await appealRepository.cancelAppeal(req.params.appealId);
+        res.status(200).json(appeal);
+    } catch (error:any) {
+        if(error.message === 'Appeal not found'){
+            res.status(404).json({message:error.message});
+        }else if(error.message === 'Appeal is not in progress'){
+            res.status(400).json({message:error.message});
+        }else{
+            next(error);
+        }
+    }
+}
