@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { AppealRequestDto } from "../dto/appealRequest.dto";
 
 export function parseReqBody(req: Request, res: Response, next: NextFunction){
     try {

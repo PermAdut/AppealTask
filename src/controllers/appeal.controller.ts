@@ -52,3 +52,12 @@ export async function cancelAllAppealsInProgress(req: Request, res: Response, ne
         next(error);
     }
 }
+
+export async function getAppealsByDate(req: Request, res: Response, next: NextFunction){
+    try{
+        const appeals = await appealRepository.findAllByDate(req.query.date as string[]);
+        res.status(200).json(appeals);
+    } catch (error:any) {
+        next(error);
+    }
+}

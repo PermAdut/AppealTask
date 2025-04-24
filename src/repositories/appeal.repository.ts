@@ -93,4 +93,23 @@ export class AppealRepository{
             throw new Error(error.message);
         }
     }
+
+    async findAllByDate(dates: string[]):Promise<AppealCreateResponseDto[]>{
+        try{
+            const appeals = await Promise.all(dates.map(async (el) => {
+                const appeal = await Appeal.find({date:{$gte:`${el}T00:00:00.000+00:00`, $lte:`${el}T23:59:59.999+00:00`}});
+                return appeal;
+            }));
+            return appeals.flat().map(appeal => new AppealCreateResponseDto({
+                _id:appeal._id.toString(),
+                theme:appeal.theme,
+                text:appeal.text,
+                appealStatus:appeal.appealStatus,
+                date:appeal.date,
+            }));
+        }catch(error:any){
+            console.log(error.message);
+            throw new Error(error.message);
+        }
+    }
 }
