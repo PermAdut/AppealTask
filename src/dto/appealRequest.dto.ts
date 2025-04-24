@@ -1,4 +1,4 @@
-export interface AppealRequestDto{
-    theme:string,
-    text:string,
+export interface AppealRequestDto {
+  theme: string;
+  text: string;
 }
