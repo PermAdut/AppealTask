@@ -143,7 +143,6 @@ export class AppealRepository {
           }),
       );
     } catch (error: any) {
-      console.log(error.message);
       throw new Error(error.message);
     }
   }

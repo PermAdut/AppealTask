@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4444:4444
+    volumes:
+      - .:/usr/src
+      - /usr/src/node_modules
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://host.docker.internal:24130/testDb
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    ports:
+      - 24130:24130
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
+  
